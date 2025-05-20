@@ -1,13 +1,14 @@
 #pragma once
+#include <string>
+using namespace std;
+#include <iostream>
+
 class Author
 {
 private:
 	int id;
 	string name;
 	string surname;
-	//string email;
-	//string password;
-	//string role;
 public:
 	Author(int id, string name, string surname)
 		: id(id), name(name), surname(surname) {

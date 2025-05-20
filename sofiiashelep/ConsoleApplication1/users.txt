@@ -1,0 +1,3 @@
+1 Ivanov Ivan Admin ivanov@example.com password123
+2 Petrov Petr Librarian petrov@example.com password456
+3 Sidorov Sidor User sidorov@example.com password789

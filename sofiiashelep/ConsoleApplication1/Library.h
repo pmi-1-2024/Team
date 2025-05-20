@@ -1,20 +1,20 @@
 #pragma once
-#include <string>
+#include <iostream>
 using namespace std;
-class Library
-{
+
+#include <string>
+
+class Library {
 private:
-	int id;
-	string name;
-	string address;
+    int ID;
+    string name;
+    string address;
 public:
-	Library(int id, string name, string address)
-		: id(id), name(name), address(address) {
-	}
-	int getId() const { return id; }
-	string getName() const { return name; }
-	string getAddress() const { return address; }
-	void setName(const string& newName) { name = newName; }
-	void setAddress(const string& newAddress) { address = newAddress; }
+
+    Library(int id, const std::string& name, const std::string& address);
+    int getID() const { return ID; }
+    string getName() const { return name; }
+    string getAddress() const { return address; }
+
 };
 
