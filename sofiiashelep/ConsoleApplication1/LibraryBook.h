@@ -1,34 +1,30 @@
 #pragma once
 #include <string>
+#include <iostream>
 using namespace std;
 
-class LibraryBook
-{
+class LibraryBook {
 private:
-	string title;
-	string author;
-	int publicationYear;
-	int libraryId;
-	int genreId;
-	int publisherId;
-	int quantity;
+    int libraryID;
+    int bookID;
+    int quantity;
 public:
-	LibraryBook(string title, string author, int publicationYear, int libraryId, int genreId, int publisherId, int quantity)
-		: title(title), author(author), publicationYear(publicationYear), libraryId(libraryId), genreId(genreId), publisherId(publisherId), quantity(quantity) {
-	}
-	string getTitle() const { return title; }
-	string getAuthor() const { return author; }
-	int getPublicationYear() const { return publicationYear; }
-	int getLibraryId() const { return libraryId; }
-	int getGenreId() const { return genreId; }
-	int getPublisherId() const { return publisherId; }
-	int getQuantity() const { return quantity; }
-	void setTitle(const string& newTitle) { title = newTitle; }
-	void setAuthor(const string& newAuthor) { author = newAuthor; }
-	void setPublicationYear(int newPublicationYear) { publicationYear = newPublicationYear; }
-	void setLibraryId(int newLibraryId) { libraryId = newLibraryId; }
-	void setGenreId(int newGenreId) { genreId = newGenreId; }
-	void setPublisherId(int newPublisherId) { publisherId = newPublisherId; }
-	void setQuantity(int newQuantity) { quantity = newQuantity; }
-};
+    LibraryBook(int libraryID, int bookID, int quantity)
+        : libraryID(libraryID), bookID(bookID), quantity(quantity) {
+    }
 
+    int getLibraryID() const { return libraryID; }
+    int getBookID() const { return bookID; }
+    int getQuantity() const { return quantity; }
+    void setLibraryID(int newLibraryID) { libraryID = newLibraryID; }
+    void setBookID(int newBookID) { bookID = newBookID; }
+    void setQuantity(int newQuantity) { quantity = newQuantity; }
+    void addQuantity(int amount) { quantity += amount; }
+    void removeQuantity(int amount) { quantity -= amount; }
+    bool isAvailable() const { return quantity > 0; }
+    void borrowBook() { if (isAvailable()) removeQuantity(1); }
+    void returnBook() { addQuantity(1); }
+    void printInfo() const {
+        cout << "Library ID: " << libraryID << ", Book ID: " << bookID << ", Quantity: " << quantity << endl;
+    }
+};
