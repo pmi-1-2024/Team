@@ -3,6 +3,7 @@
 #include <string>
 #include <Windows.h>
 #include "BookManager.h"
+#include "User.h"
 
 using namespace std;
 
@@ -32,82 +33,39 @@ string getRoleFromChoice(int choice) {
     }
 }
 
-bool authenticateUser(const string& role, const string& email, const string& password) {
-    ifstream file("users.txt");
-    if (!file.is_open()) {
-        cerr << "Не вдалося відкрити файл users.txt" << endl;
-        return false;
-    }
-
-    string fileRole, fileEmail, filePassword;
-
-    while (file >> fileRole >> fileEmail >> filePassword) {
-        if (fileRole == role && fileEmail == email && filePassword == password) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-bool userExists(const string& email) {
-    ifstream file("users.txt");
-    string fileRole, fileEmail, filePassword;
-
-    while (file >> fileRole >> fileEmail >> filePassword) {
-        if (fileEmail == email) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void registerUser() {
     int roleChoice;
-    string role, email, password;
-
     cout << "\n==== Реєстрація користувача ====\n";
     showRoleMenu();
     cin >> roleChoice;
 
-    role = getRoleFromChoice(roleChoice);
+    string role = getRoleFromChoice(roleChoice);
     if (role.empty()) {
         cout << "Невірна роль." << endl;
         return;
     }
 
-    cout << "Введіть електронну пошту: ";
-    cin >> email;
+    User newUser;
+    newUser.inputUserData(role);
 
-    if (userExists(email)) {
+    if (User::exists("users.txt", newUser.getEmail())) {
         cout << "Користувач з такою поштою вже існує.\n";
         return;
     }
 
-    cout << "Введіть пароль: ";
-    cin >> password;
-
-    ofstream file("users.txt", ios::app);
-    if (!file.is_open()) {
-        cerr << " Не вдалося відкрити файл для запису.\n";
-        return;
-    }
-
-    file << role << " " << email << " " << password << endl;
-    file.close();
-
-    cout << " Реєстрація успішна!\n";
+    newUser.saveToFile("users.txt");
+    cout << "Реєстрація успішна!\n";
 }
 
 bool loginUser() {
     int roleChoice;
-    string role, email, password;
+    string email, password;
 
     cout << "\n==== Вхід користувача ====\n";
     showRoleMenu();
     cin >> roleChoice;
 
-    role = getRoleFromChoice(roleChoice);
+    string role = getRoleFromChoice(roleChoice);
     if (role.empty()) {
         cout << "Невірна роль." << endl;
         return false;
@@ -118,15 +76,15 @@ bool loginUser() {
     cout << "Введіть пароль: ";
     cin >> password;
 
-    if (authenticateUser(role, email, password)) {
+    if (User::authenticate("users.txt", role, email, password)) {
         cout << "Успішний вхід як " << role << "!" << endl;
 
         if (role == "Покупець") {
             // buyerMenu();
         }
         else if (role == "Бібліотекар") {
-            BookManager manager;
-            manager.run();
+         //   BookManager manager;
+         //   manager.run();
         }
         else if (role == "Адмін") {
             // adminMenu();
@@ -141,6 +99,7 @@ bool loginUser() {
 }
 
 int main() {
+    SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
     int choice;
 
