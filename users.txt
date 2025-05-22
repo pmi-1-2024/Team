@@ -1,0 +1,4 @@
+Покупець user1@gmail.com 1234
+Бібліотекар lib1@gmail.com 5678
+Адмін admin@gmail.com adminpass
+
