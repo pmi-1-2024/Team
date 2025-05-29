@@ -57,7 +57,6 @@ public:
     void addPublisher(); void viewPublishers() const; void modifyPublisher(); void removePublisher();
     void addGenre(); void viewGenres() const; void modifyGenre(); void removeGenre();
 
-    void exportToCSV(const string& filename) const;
     int displayMainMenu() const;
 
     string getAuthorNameById(int authorId) const;

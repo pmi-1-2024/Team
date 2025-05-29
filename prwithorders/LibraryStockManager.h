@@ -8,21 +8,21 @@ class BookManager;
 
 class LibraryStockManager {
 private:
-    std::vector<LibraryStockItem>* stockItems;
+    vector<LibraryStockItem>* stockItems;
     const BookManager& bookManagerRef;
-    std::string filename = "library_stock.txt";
+    string filename = "library_stock.txt";
 
     void loadStockItems();
     void saveStockItems() const;
 
 public:
-    LibraryStockManager(std::vector<LibraryStockItem>* stockList, const BookManager& bmRef);
+    LibraryStockManager(vector<LibraryStockItem>* stockList, const BookManager& bmRef);
     ~LibraryStockManager();
 
-    bool addOrUpdateStockItem(const std::string& physicalLibraryId, int bookId, int quantityChange); 
-    void viewStockForLibrary(const std::string& physicalLibraryId) const; 
+    bool addOrUpdateStockItem(const string& physicalLibraryId, int bookId, int quantityChange);
+    void viewStockForLibrary(const string& physicalLibraryId) const;
     void updateStockQuantityViaMenu();
-    LibraryStockItem* findStockItem(const std::string& physicalLibraryId, int bookId); 
+    LibraryStockItem* findStockItem(const string& physicalLibraryId, int bookId);
 
     void runStockManagementMenu(const PhysicalLibraryManager& physLibManager);
 };

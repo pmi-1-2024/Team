@@ -213,9 +213,9 @@ int main() {
                     int adminChoice;
                     do {
                         cout << "\n--- Administrator Menu ---\n"
-                            << "1. Manage Book Catalog (BookManager)\n"
-                            << "2. Manage Physical Libraries\n"
-                            << "3. Manage Library Stock\n"
+                            //Need to add avaible manage user id
+                            << "1. Manage Physical Libraries\n"
+                            << "2. Manage Library Stock\n"
                             << "0. Exit Administrator Menu\n"
                             << "Your choice: ";
                         cin >> adminChoice;
@@ -229,9 +229,8 @@ int main() {
                         }
 
                         switch (adminChoice) {
-                        case 1: bookManager.run(); break;
-                        case 2: physicalLibraryManager.runPhysicalLibraryMenu(); break;
-                        case 3: stockManager.runStockManagementMenu(physicalLibraryManager); break;
+                        case 1: physicalLibraryManager.runPhysicalLibraryMenu(); break;
+                        case 2: stockManager.runStockManagementMenu(physicalLibraryManager); break;
                         case 0: cout << "Exiting Administrator Menu.\n"; break;
                         default: cout << "Invalid choice.\n";
                         }
