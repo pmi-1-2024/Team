@@ -8,12 +8,10 @@
 #include <vector>   
 #include <string>  
 
-using namespace std;
-
 namespace {
     template<typename T>
-    void loadDataFromFileInternal(const string& filename, vector<T>& items) {
-        ifstream file(filename);
+    void loadDataFromFileInternal(const std::string& filename, std::vector<T>& items) {
+        std::ifstream file(filename);
         if (!file.is_open()) {
             return;
         }
@@ -26,10 +24,10 @@ namespace {
     }
 
     template<typename T>
-    void saveDataToFileInternal(const string& filename, const vector<T>& items) {
-        ofstream file(filename, ios::trunc);
+    void saveDataToFileInternal(const std::string& filename, const std::vector<T>& items) {
+        std::ofstream file(filename, std::ios::trunc);
         if (!file.is_open()) {
-            cerr << "Error: Cannot open " << filename << " for saving." << endl;
+            std::cerr << "Error: Cannot open " << filename << " for saving." << std::endl;
             return;
         }
         for (const auto& item : items) {
@@ -45,7 +43,7 @@ BookManager::BookManager() {
 
 BookManager::~BookManager() {
     saveAllData();
-    cout << "BookManager data saved." << endl;
+    std::cout << "BookManager data saved." << std::endl;
 }
 
 void BookManager::loadAllData() {
@@ -53,7 +51,7 @@ void BookManager::loadAllData() {
     loadDataFromFileInternal(AUTHORS_FILE_BM, authors);
     loadDataFromFileInternal(PUBLISHERS_FILE_BM, publishers);
     loadDataFromFileInternal(GENRES_FILE_BM, genres);
-    cout << "Book catalog data loaded." << endl;
+    std::cout << "Book catalog data loaded." << std::endl;
 }
 
 void BookManager::saveAllData() const {
@@ -68,131 +66,74 @@ void BookManager::saveAuthors() const { saveDataToFileInternal(AUTHORS_FILE_BM, 
 void BookManager::savePublishers() const { saveDataToFileInternal(PUBLISHERS_FILE_BM, publishers); }
 void BookManager::saveGenres() const { saveDataToFileInternal(GENRES_FILE_BM, genres); }
 
-int BookManager::getIntInput(const string& prompt, bool allowZero) const {
+int BookManager::getIntInput(const std::string& prompt, bool allowZero) const {
     int input;
     while (true) {
-        cout << prompt;
-        cin >> input;
-        if (cin.good() && (allowZero || input != 0)) {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        std::cout << prompt;
+        std::cin >> input;
+        if (std::cin.good() && (allowZero || input != 0)) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return input;
         }
-        cout << "Input error. Please enter an integer" << (allowZero ? "" : " (non-zero)") << "." << endl;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        std::cout << "Input error. Please enter an integer" << (allowZero ? "" : " (non-zero)") << "." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
 
-double BookManager::getDoubleInput(const string& prompt) const {
+double BookManager::getDoubleInput(const std::string& prompt) const {
     double input;
     while (true) {
-        cout << prompt;
-        cin >> input;
-        if (cin.good()) {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        std::cout << prompt;
+        std::cin >> input;
+        if (std::cin.good()) {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return input;
         }
-        cout << "Input error. Please enter a number (e.g., 123.45)." << endl;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        std::cout << "Input error. Please enter a number (e.g., 123.45)." << std::endl;
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
 
-string BookManager::getStringLineInput(const string& prompt) const {
-    string input;
-    cout << prompt;
-    getline(cin, input);
+std::string BookManager::getStringLineInput(const std::string& prompt) const {
+    std::string input;
+    std::cout << prompt;
+    std::getline(std::cin, input);
     return input;
 }
 
-char BookManager::getCharInput(const string& prompt, const string& validChars) const {
+char BookManager::getCharInput(const std::string& prompt, const std::string& validChars) const {
     char input_char_val;
-    string line_input;
+    std::string line_input;
     while (true) {
-        cout << prompt << " (" << validChars[0] << "/" << validChars[1] << "): ";
-        getline(cin, line_input);
+        std::cout << prompt << " (" << validChars[0] << "/" << validChars[1] << "): ";
+        std::getline(std::cin, line_input);
         if (line_input.length() == 1) {
-            input_char_val = tolower(line_input[0]);
-            if (validChars.find(input_char_val) != string::npos) {
+            input_char_val = std::tolower(line_input[0]);
+            if (validChars.find(input_char_val) != std::string::npos) {
                 return input_char_val;
             }
         }
-        cout << "Invalid input. Please enter '" << validChars[0] << "' or '" << validChars[1] << "'." << endl;
+        std::cout << "Invalid input. Please enter '" << validChars[0] << "' or '" << validChars[1] << "'." << std::endl;
     }
 }
-
-void BookManager::borrowBook() {
-    filterBooks();
-
-    int bookId = getIntInput("Введіть ID книги, яку хочете взяти: ");
-    Book selectedBook; 
-
-    orders.emplace_back(selectedBook, currentUser.getId()); 
-    cout << "Книга успішно взята!" << endl;
-
-    char choice;
-    cout << "Бажаєте взяти ще одну книгу? (Y/N): ";
-    cin >> choice;
-    if (choice == 'Y' || choice == 'y') {
-        borrowBook(); 
-    }
-}
-
-void BookManager::returnBook() {
-    int orderId = getIntInput("Введіть ID замовлення, яке хочете повернути: ");
-
-    auto it = find_if(orders.begin(), orders.end(), [orderId](const Order& o) {
-        return o.getStatus() == Order::ACTIVE && o.getId() == orderId; // Реалізуйте getId в класі Order
-        });
-
-    if (it != orders.end()) {
-        it->completeOrder();
-        cout << "Замовлення успішно повернуто!" << endl;
-    }
-    else {
-        cout << "Замовлення не знайдено або вже повернуто." << endl;
-    }
-}
-
-void BookManager::buyBook() {
-    filterBooks();
-
-    int bookId = getIntInput("Введіть ID книги, яку хочете купити: ");
-    Book selectedBook; 
-
-    char format;
-    cout << "Виберіть формат (E - електронна, P - паперова): ";
-    cin >> format;
-
-    double price = (format == 'E') ? selectedBook.getElectronicPrice() : selectedBook.getPaperPrice();
-    cout << "Ви успішно купили книгу за " << price << " грн!" << endl;
-
-    char choice;
-    cout << "Бажаєте купити ще одну книгу? (Y/N): ";
-    cin >> choice;
-    if (choice == 'Y' || choice == 'y') {
-        buyBook(); 
-    }
-}
-
-
-
 
 void BookManager::addBook() {
     Book b;
     int id_val, authorId_val, publisherId_val, year_val;
-    string title_val, format_val, genre_ids_str_val;
+    std::string title_val, format_val, genre_ids_str_val;
     double rating_val, paper_price_val, electronic_price_val;
     char available_char;
     bool available_bool;
-    vector<int> genre_ids_vec_val;
+    std::vector<int> genre_ids_vec_val;
 
-    cout << "--- Adding a New Book ---" << endl;
+    std::cout << "--- Adding a New Book ---" << std::endl;
 
     while (true) {
         id_val = getIntInput("Book ID (non-zero): ");
         if (!findBookById(id_val)) break;
-        cout << "Book with this ID already exists. Try another ID." << endl;
+        std::cout << "Book with this ID already exists. Try another ID." << std::endl;
     }
     b.setId(id_val);
 
@@ -202,7 +143,7 @@ void BookManager::addBook() {
     while (true) {
         authorId_val = getIntInput("Author ID (from the list provided, non-zero): ");
         if (authorExists(authorId_val)) break;
-        cout << "Author with this ID does not exist. Please select an ID from the list or add a new author first." << endl;
+        std::cout << "Author with this ID does not exist. Please select an ID from the list or add a new author first." << std::endl;
     }
     b.setAuthorId(authorId_val);
 
@@ -210,24 +151,24 @@ void BookManager::addBook() {
     while (true) {
         publisherId_val = getIntInput("Publisher ID (from the list provided, non-zero): ");
         if (publisherExists(publisherId_val)) break;
-        cout << "Publisher with this ID does not exist. Please select an ID from the list or add a new publisher first." << endl;
+        std::cout << "Publisher with this ID does not exist. Please select an ID from the list or add a new publisher first." << std::endl;
     }
     b.setPublisherId(publisherId_val);
 
     viewGenres();
     genre_ids_str_val = getStringLineInput("Genre IDs (e.g., 1;2;3 or empty, separated by ';'): ");
     if (!genre_ids_str_val.empty()) {
-        stringstream ss_genres(genre_ids_str_val);
-        string item_str;
+        std::stringstream ss_genres(genre_ids_str_val);
+        std::string item_str;
         int item_int;
-        while (getline(ss_genres, item_str, ';')) {
+        while (std::getline(ss_genres, item_str, ';')) {
             if (!item_str.empty()) {
-                stringstream converter(item_str);
+                std::stringstream converter(item_str);
                 if (converter >> item_int && genreExists(item_int)) {
                     genre_ids_vec_val.push_back(item_int);
                 }
                 else {
-                    cout << "Warning: Genre with ID " << item_str << " not found or entered incorrectly. It will not be added." << endl;
+                    std::cout << "Warning: Genre with ID " << item_str << " not found or entered incorrectly. It will not be added." << std::endl;
                 }
             }
         }
@@ -236,7 +177,7 @@ void BookManager::addBook() {
 
     rating_val = getDoubleInput("Rating (0.0 - 10.0): ");
     while (rating_val < 0.0 || rating_val > 10.0) {
-        cout << "Rating must be between 0.0 - 10.0." << endl;
+        std::cout << "Rating must be between 0.0 - 10.0." << std::endl;
         rating_val = getDoubleInput("Rating (0.0 - 10.0): ");
     }
     b.setRating(rating_val);
@@ -257,15 +198,15 @@ void BookManager::addBook() {
     b.setAvailable(available_bool);
 
     books.push_back(b);
-    cout << "Book added." << endl;
+    std::cout << "Book added." << std::endl;
 }
 
 void BookManager::viewBooks() const {
     if (books.empty()) {
-        cout << "No books in the catalog." << endl;
+        std::cout << "No books in the catalog." << std::endl;
         return;
     }
-    cout << "\n--- All Books in Catalog ---" << endl;
+    std::cout << "\n--- All Books in Catalog ---" << std::endl;
     for (const auto& book : books) {
         book.displayInfo(*this);
     }
@@ -293,87 +234,87 @@ void BookManager::modifyBook() {
     Book* book_to_modify = findBookById(id_to_update);
 
     if (book_to_modify == nullptr) {
-        cout << "Book with ID " << id_to_update << " not found." << endl;
+        std::cout << "Book with ID " << id_to_update << " not found." << std::endl;
         return;
     }
 
-    cout << "Found book. Current data for \"" << book_to_modify->getTitle() << "\":" << endl;
+    std::cout << "Found book. Current data for \"" << book_to_modify->getTitle() << "\":" << std::endl;
     book_to_modify->displayInfo(*this);
-    cout << "Enter new data (press Enter to keep current value. ID cannot be changed):\n";
+    std::cout << "Enter new data (press Enter to keep current value. ID cannot be changed):\n";
 
-    string temp_str; int temp_int; double temp_double; char temp_char;
+    std::string temp_str; int temp_int; double temp_double; char temp_char;
 
     temp_str = getStringLineInput("New title (current: " + book_to_modify->getTitle() + "): ");
     if (!temp_str.empty()) book_to_modify->setTitle(temp_str);
 
     viewAuthors();
-    temp_str = getStringLineInput("New Author ID (current: " + to_string(book_to_modify->getAuthorId()) + "): ");
+    temp_str = getStringLineInput("New Author ID (current: " + std::to_string(book_to_modify->getAuthorId()) + "): ");
     if (!temp_str.empty()) {
-        stringstream converter(temp_str);
+        std::stringstream converter(temp_str);
         if (converter >> temp_int && authorExists(temp_int)) book_to_modify->setAuthorId(temp_int);
-        else cout << "Author ID not changed (invalid input or ID does not exist)." << endl;
+        else std::cout << "Author ID not changed (invalid input or ID does not exist)." << std::endl;
     }
 
     viewPublishers();
-    temp_str = getStringLineInput("New Publisher ID (current: " + to_string(book_to_modify->getPublisherId()) + "): ");
+    temp_str = getStringLineInput("New Publisher ID (current: " + std::to_string(book_to_modify->getPublisherId()) + "): ");
     if (!temp_str.empty()) {
-        stringstream converter(temp_str);
+        std::stringstream converter(temp_str);
         if (converter >> temp_int && publisherExists(temp_int)) book_to_modify->setPublisherId(temp_int);
-        else cout << "Publisher ID not changed (invalid input or ID does not exist)." << endl;
+        else std::cout << "Publisher ID not changed (invalid input or ID does not exist)." << std::endl;
     }
 
     viewGenres();
     temp_str = getStringLineInput("New Genre IDs (current: " + book_to_modify->getGenreIdCSV() + ", separated by ';'): ");
     if (!temp_str.empty()) {
-        vector<int> new_genre_ids; stringstream ss(temp_str); string item_str; int item_int_val;
-        while (getline(ss, item_str, ';')) {
+        std::vector<int> new_genre_ids; std::stringstream ss(temp_str); std::string item_str; int item_int_val;
+        while (std::getline(ss, item_str, ';')) {
             if (!item_str.empty()) {
-                stringstream converter(item_str);
+                std::stringstream converter(item_str);
                 if (converter >> item_int_val && genreExists(item_int_val)) new_genre_ids.push_back(item_int_val);
-                else cout << "Warning: Genre ID " << item_str << " not found or invalid, will not be added." << endl;
+                else std::cout << "Warning: Genre ID " << item_str << " not found or invalid, will not be added." << std::endl;
             }
         }
         book_to_modify->setGenreIds(new_genre_ids);
     }
 
-    temp_str = getStringLineInput("New rating (current: " + to_string(book_to_modify->getRating()) + "): ");
+    temp_str = getStringLineInput("New rating (current: " + std::to_string(book_to_modify->getRating()) + "): ");
     if (!temp_str.empty()) {
-        stringstream converter(temp_str);
+        std::stringstream converter(temp_str);
         if (converter >> temp_double && temp_double >= 0.0 && temp_double <= 10.0) book_to_modify->setRating(temp_double);
-        else cout << "Rating not changed (invalid input)." << endl;
+        else std::cout << "Rating not changed (invalid input)." << std::endl;
     }
 
     temp_str = getStringLineInput("New format (current: " + book_to_modify->getFormat() + "): ");
     if (!temp_str.empty()) book_to_modify->setFormat(temp_str);
 
-    temp_str = getStringLineInput("New year of publication (current: " + to_string(book_to_modify->getYear()) + "): ");
-    if (!temp_str.empty()) { stringstream c(temp_str); if (c >> temp_int) book_to_modify->setYear(temp_int); }
+    temp_str = getStringLineInput("New year of publication (current: " + std::to_string(book_to_modify->getYear()) + "): ");
+    if (!temp_str.empty()) { std::stringstream c(temp_str); if (c >> temp_int) book_to_modify->setYear(temp_int); }
 
-    temp_str = getStringLineInput("New paper version price (current: " + to_string(book_to_modify->getPaperPrice()) + "): ");
-    if (!temp_str.empty()) { stringstream c(temp_str); if (c >> temp_double) book_to_modify->setPaperPrice(temp_double < 0 ? 0 : temp_double); }
+    temp_str = getStringLineInput("New paper version price (current: " + std::to_string(book_to_modify->getPaperPrice()) + "): ");
+    if (!temp_str.empty()) { std::stringstream c(temp_str); if (c >> temp_double) book_to_modify->setPaperPrice(temp_double < 0 ? 0 : temp_double); }
 
-    temp_str = getStringLineInput("New electronic version price (current: " + to_string(book_to_modify->getElectronicPrice()) + "): ");
-    if (!temp_str.empty()) { stringstream c(temp_str); if (c >> temp_double) book_to_modify->setElectronicPrice(temp_double < 0 ? 0 : temp_double); }
+    temp_str = getStringLineInput("New electronic version price (current: " + std::to_string(book_to_modify->getElectronicPrice()) + "): ");
+    if (!temp_str.empty()) { std::stringstream c(temp_str); if (c >> temp_double) book_to_modify->setElectronicPrice(temp_double < 0 ? 0 : temp_double); }
 
-    temp_str = getStringLineInput("Available (y/n) (current: " + string(book_to_modify->isAvailable() ? "y" : "n") + "): ");
+    temp_str = getStringLineInput("Available (y/n) (current: " + std::string(book_to_modify->isAvailable() ? "y" : "n") + "): ");
     if (!temp_str.empty()) {
-        temp_char = tolower(temp_str[0]);
+        temp_char = std::tolower(temp_str[0]);
         if (temp_char == 'y' || temp_char == 'n') book_to_modify->setAvailable(temp_char == 'y');
-        else cout << "Availability status not changed (invalid input)." << endl;
+        else std::cout << "Availability status not changed (invalid input)." << std::endl;
     }
-    cout << "Book updated." << endl;
+    std::cout << "Book updated." << std::endl;
 }
 
 void BookManager::removeBook() {
     int id_to_delete = getIntInput("Enter ID of the book to delete: ");
-    auto it = remove_if(books.begin(), books.end(),
+    auto it = std::remove_if(books.begin(), books.end(),
         [id_to_delete](const Book& b) { return b.getId() == id_to_delete; });
     if (it != books.end()) {
         books.erase(it, books.end());
-        cout << "Book deleted." << endl;
+        std::cout << "Book deleted." << std::endl;
     }
     else {
-        cout << "Book with ID " << id_to_delete << " not found." << endl;
+        std::cout << "Book with ID " << id_to_delete << " not found." << std::endl;
     }
 }
 
@@ -383,132 +324,132 @@ void BookManager::setBookAvailability(int bookId, bool available) {
         book->setAvailable(available);
     }
     else {
-        cerr << "Error (BookManager::setBookAvailability): Book with ID " << bookId << " not found." << endl;
+        std::cerr << "Error (BookManager::setBookAvailability): Book with ID " << bookId << " not found." << std::endl;
     }
 }
 
 void BookManager::addAuthor() {
-    int id_val; string name_val;
-    cout << "--- Adding Author ---" << endl;
+    int id_val; std::string name_val;
+    std::cout << "--- Adding Author ---" << std::endl;
     while (true) {
         id_val = getIntInput("Author ID (non-zero): ");
         if (!authorExists(id_val)) break;
-        cout << "Author with ID " << id_val << " already exists.\n";
+        std::cout << "Author with ID " << id_val << " already exists.\n";
     }
     name_val = getStringLineInput("Author Name: ");
     authors.emplace_back(id_val, name_val);
-    cout << "Author added.\n";
+    std::cout << "Author added.\n";
 }
 void BookManager::viewAuthors() const {
-    if (authors.empty()) { cout << "No authors found.\n"; return; }
-    cout << "\n--- Authors ---\n";
-    for (const auto& a : authors) cout << "ID: " << a.getId() << ", Name: " << a.getName() << endl;
+    if (authors.empty()) { std::cout << "No authors found.\n"; return; }
+    std::cout << "\n--- Authors ---\n";
+    for (const auto& a : authors) std::cout << "ID: " << a.getId() << ", Name: " << a.getName() << std::endl;
 }
 void BookManager::modifyAuthor() {
     int id_val = getIntInput("Author ID to modify: ");
     for (auto& a : authors) {
         if (a.getId() == id_val) {
-            string n_name = getStringLineInput("New name (current: " + a.getName() + "): ");
+            std::string n_name = getStringLineInput("New name (current: " + a.getName() + "): ");
             if (!n_name.empty()) a.setName(n_name);
-            cout << "Author updated.\n"; return;
+            std::cout << "Author updated.\n"; return;
         }
     }
-    cout << "Author not found.\n";
+    std::cout << "Author not found.\n";
 }
 void BookManager::removeAuthor() {
     int id_val = getIntInput("Author ID to delete: ");
-    auto it = remove_if(authors.begin(), authors.end(), [id_val](const Author& a) { return a.getId() == id_val; });
-    if (it != authors.end()) { authors.erase(it, authors.end()); cout << "Author deleted.\n"; }
-    else { cout << "Author not found.\n"; }
+    auto it = std::remove_if(authors.begin(), authors.end(), [id_val](const Author& a) { return a.getId() == id_val; });
+    if (it != authors.end()) { authors.erase(it, authors.end()); std::cout << "Author deleted.\n"; }
+    else { std::cout << "Author not found.\n"; }
 }
 
 void BookManager::addPublisher() {
-    int id; string name;
-    cout << "--- Adding Publisher ---\n";
+    int id; std::string name;
+    std::cout << "--- Adding Publisher ---\n";
     while (true) {
         id = getIntInput("Publisher ID (non-zero): ");
         if (!publisherExists(id))break;
-        cout << "Publisher with ID " << id << " already exists.\n";
+        std::cout << "Publisher with ID " << id << " already exists.\n";
     }
     name = getStringLineInput("Name: ");
     publishers.emplace_back(id, name);
-    cout << "Publisher added.\n";
+    std::cout << "Publisher added.\n";
 }
 void BookManager::viewPublishers() const {
-    if (publishers.empty()) { cout << "No publishers found.\n"; return; }
-    cout << "\n--- Publishers ---\n";
-    for (const auto& p : publishers)cout << "ID: " << p.getId() << ", Name: " << p.getName() << endl;
+    if (publishers.empty()) { std::cout << "No publishers found.\n"; return; }
+    std::cout << "\n--- Publishers ---\n";
+    for (const auto& p : publishers)std::cout << "ID: " << p.getId() << ", Name: " << p.getName() << std::endl;
 }
 void BookManager::modifyPublisher() {
     int id = getIntInput("Publisher ID to modify: ");
     for (auto& p : publishers) {
         if (p.getId() == id) {
-            string n = getStringLineInput("New Name (current: " + p.getName() + "): ");
+            std::string n = getStringLineInput("New Name (current: " + p.getName() + "): ");
             if (!n.empty())p.setName(n);
-            cout << "Publisher updated.\n"; return;
+            std::cout << "Publisher updated.\n"; return;
         }
     }
-    cout << "Publisher not found.\n";
+    std::cout << "Publisher not found.\n";
 }
 void BookManager::removePublisher() {
     int id = getIntInput("Publisher ID to delete: ");
-    auto it = remove_if(publishers.begin(), publishers.end(), [id](const Publisher& p) {return p.getId() == id; });
-    if (it != publishers.end()) { publishers.erase(it, publishers.end()); cout << "Publisher deleted.\n"; }
-    else { cout << "Publisher not found.\n"; }
+    auto it = std::remove_if(publishers.begin(), publishers.end(), [id](const Publisher& p) {return p.getId() == id; });
+    if (it != publishers.end()) { publishers.erase(it, publishers.end()); std::cout << "Publisher deleted.\n"; }
+    else { std::cout << "Publisher not found.\n"; }
 }
 
 void BookManager::addGenre() {
-    int id; string name;
-    cout << "--- Adding Genre ---\n";
+    int id; std::string name;
+    std::cout << "--- Adding Genre ---\n";
     while (true) {
         id = getIntInput("Genre ID (non-zero): ");
         if (!genreExists(id))break;
-        cout << "Genre with ID " << id << " already exists.\n";
+        std::cout << "Genre with ID " << id << " already exists.\n";
     }
     name = getStringLineInput("Name: ");
     genres.emplace_back(id, name);
-    cout << "Genre added.\n";
+    std::cout << "Genre added.\n";
 }
 void BookManager::viewGenres() const {
-    if (genres.empty()) { cout << "No genres found.\n"; return; }
-    cout << "\n--- Genres ---\n";
-    for (const auto& g : genres)cout << "ID: " << g.getId() << ", Name: " << g.getName() << endl;
+    if (genres.empty()) { std::cout << "No genres found.\n"; return; }
+    std::cout << "\n--- Genres ---\n";
+    for (const auto& g : genres)std::cout << "ID: " << g.getId() << ", Name: " << g.getName() << std::endl;
 }
 void BookManager::modifyGenre() {
     int id = getIntInput("Genre ID to modify: ");
     for (auto& g : genres) {
         if (g.getId() == id) {
-            string n = getStringLineInput("New Name (current: " + g.getName() + "): ");
+            std::string n = getStringLineInput("New Name (current: " + g.getName() + "): ");
             if (!n.empty())g.setName(n);
-            cout << "Genre updated.\n"; return;
+            std::cout << "Genre updated.\n"; return;
         }
     }
-    cout << "Genre not found.\n";
+    std::cout << "Genre not found.\n";
 }
 void BookManager::removeGenre() {
     int id = getIntInput("Genre ID to delete: ");
-    auto it = remove_if(genres.begin(), genres.end(), [id](const Genre& g) {return g.getId() == id; });
-    if (it != genres.end()) { genres.erase(it, genres.end()); cout << "Genre deleted.\n"; }
-    else { cout << "Genre not found.\n"; }
+    auto it = std::remove_if(genres.begin(), genres.end(), [id](const Genre& g) {return g.getId() == id; });
+    if (it != genres.end()) { genres.erase(it, genres.end()); std::cout << "Genre deleted.\n"; }
+    else { std::cout << "Genre not found.\n"; }
 }
 
-string BookManager::getAuthorNameById(int authorId) const {
+std::string BookManager::getAuthorNameById(int authorId) const {
     for (const auto& a : authors) if (a.getId() == authorId) return a.getName(); return "N/A";
 }
-string BookManager::getPublisherNameById(int publisherId) const {
+std::string BookManager::getPublisherNameById(int publisherId) const {
     for (const auto& p : publishers) if (p.getId() == publisherId) return p.getName(); return "N/A";
 }
-string BookManager::getGenreNameById(int genreId) const {
+std::string BookManager::getGenreNameById(int genreId) const {
     for (const auto& g : genres) if (g.getId() == genreId) return g.getName(); return "N/A";
 }
 bool BookManager::authorExists(int authorId) const { for (const auto& a : authors) if (a.getId() == authorId) return true; return false; }
 bool BookManager::publisherExists(int publisherId) const { for (const auto& p : publishers) if (p.getId() == publisherId) return true; return false; }
 bool BookManager::genreExists(int genreId) const { for (const auto& g : genres) if (g.getId() == genreId) return true; return false; }
 
-void BookManager::exportToCSV(const string& filename) const {
-    ofstream file(filename);
+void BookManager::exportToCSV(const std::string& filename) const {
+    std::ofstream file(filename);
     if (!file.is_open()) {
-        cerr << "Error: Cannot open " << filename << " for CSV export." << endl;
+        std::cerr << "Error: Cannot open " << filename << " for CSV export." << std::endl;
         return;
     }
     file << "ID,Title,AuthorID,PublisherID,GenreIDs_CSV,Rating,Format,Year,PaperPrice,ElectronicPrice,Available\n";
@@ -521,11 +462,11 @@ void BookManager::exportToCSV(const string& filename) const {
             << (book.isAvailable() ? "true" : "false") << "\n";
     }
     file.close();
-    cout << "Books exported to " << filename << "." << endl;
+    std::cout << "Books exported to " << filename << "." << std::endl;
 }
 
 int BookManager::displayMainMenu() const {
-    cout << "\n--- Book Catalog Management Menu ---"
+    std::cout << "\n--- Book Catalog Management Menu ---"
         << "\n1. Manage Books"
         << "\n2. Manage Authors"
         << "\n3. Manage Publishers"
@@ -544,7 +485,7 @@ void BookManager::run() {
 
         switch (choice) {
         case 1:
-            cout << "\n--- Book Menu ---\n1. Add\n2. View All\n3. Update\n4. Delete\n0. Back\nYour choice: ";
+            std::cout << "\n--- Book Menu ---\n1. Add\n2. View All\n3. Update\n4. Delete\n0. Back\nYour choice: ";
             subChoice = getIntInput("", true);
             switch (subChoice) {
             case 1: addBook(); break;
@@ -552,11 +493,11 @@ void BookManager::run() {
             case 3: modifyBook(); break;
             case 4: removeBook(); break;
             case 0: break;
-            default: cout << "Invalid choice.\n";
+            default: std::cout << "Invalid choice.\n";
             }
             break;
         case 2:
-            cout << "\n--- Author Menu ---\n1. Add\n2. View All\n3. Update\n4. Delete\n0. Back\nYour choice: ";
+            std::cout << "\n--- Author Menu ---\n1. Add\n2. View All\n3. Update\n4. Delete\n0. Back\nYour choice: ";
             subChoice = getIntInput("", true);
             switch (subChoice) {
             case 1: addAuthor(); break;
@@ -564,11 +505,11 @@ void BookManager::run() {
             case 3: modifyAuthor(); break;
             case 4: removeAuthor(); break;
             case 0: break;
-            default: cout << "Invalid choice.\n";
+            default: std::cout << "Invalid choice.\n";
             }
             break;
         case 3:
-            cout << "\n--- Publisher Menu ---\n1. Add\n2. View All\n3. Update\n4. Delete\n0. Back\nYour choice: ";
+            std::cout << "\n--- Publisher Menu ---\n1. Add\n2. View All\n3. Update\n4. Delete\n0. Back\nYour choice: ";
             subChoice = getIntInput("", true);
             switch (subChoice) {
             case 1: addPublisher(); break;
@@ -576,11 +517,11 @@ void BookManager::run() {
             case 3: modifyPublisher(); break;
             case 4: removePublisher(); break;
             case 0: break;
-            default: cout << "Invalid choice.\n";
+            default: std::cout << "Invalid choice.\n";
             }
             break;
         case 4:
-            cout << "\n--- Genre Menu ---\n1. Add\n2. View All\n3. Update\n4. Delete\n0. Back\nYour choice: ";
+            std::cout << "\n--- Genre Menu ---\n1. Add\n2. View All\n3. Update\n4. Delete\n0. Back\nYour choice: ";
             subChoice = getIntInput("", true);
             switch (subChoice) {
             case 1: addGenre(); break;
@@ -588,20 +529,20 @@ void BookManager::run() {
             case 3: modifyGenre(); break;
             case 4: removeGenre(); break;
             case 0: break;
-            default: cout << "Invalid choice.\n";
+            default: std::cout << "Invalid choice.\n";
             }
             break;
         case 5: exportToCSV("library_catalog_export.csv"); break;
-        case 0: running = false; cout << "Returning to previous menu..." << endl; break;
-        default: cout << "Invalid choice. Please try again." << endl; break;
+        case 0: running = false; std::cout << "Returning to previous menu..." << std::endl; break;
+        default: std::cout << "Invalid choice. Please try again." << std::endl; break;
         }
         if (running && choice != 0) {
-            cout << "\nPress Enter to continue...";
-            string dummy; getline(cin, dummy);
+            std::cout << "\nPress Enter to continue...";
+            std::string dummy; std::getline(std::cin, dummy);
         }
     }
 }
 
-const vector<Book>& BookManager::getAllBooks() const {
+const std::vector<Book>& BookManager::getAllBooks() const {
     return books;
 }

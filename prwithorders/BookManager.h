@@ -12,6 +12,8 @@
 #include <limits>   
 #include <algorithm> 
 
+using namespace std;
+
 const string BOOKS_FILE_BM = "books.txt";
 const string AUTHORS_FILE_BM = "authors.txt";
 const string PUBLISHERS_FILE_BM = "publishers.txt";
@@ -24,7 +26,6 @@ private:
     vector<Publisher> publishers;
     vector<Genre> genres;
 
-
     void loadAllData();
     void saveAllData() const;
 
@@ -33,26 +34,16 @@ private:
     void savePublishers() const;
     void saveGenres() const;
 
-    int getIntInput(const string& prompt, bool allowZero = false) const; 
-    double getDoubleInput(const string& prompt) const;                  
-    string getStringLineInput(const string& prompt) const;   
-    char getCharInput(const string& prompt, const string& validChars = "yn") const; 
+    int getIntInput(const string& prompt, bool allowZero = false) const;
+    double getDoubleInput(const string& prompt) const;
+    string getStringLineInput(const string& prompt) const;
+    char getCharInput(const string& prompt, const string& validChars = "yn") const;
 
 public:
     BookManager();
     ~BookManager();
 
     void run();
-
-    void borrowBook();
-    void returnBook();
-    void buyBook();
-    void viewOrderHistory() const;
-
-    void showMenu(); 
-    void filterBooks(); 
-    void showActiveOrders() const; 
-    void showCompletedOrders() const;
 
     void addBook();
     void viewBooks() const;

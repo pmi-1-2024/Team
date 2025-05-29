@@ -1,0 +1,35 @@
+12345678 Іванов Іван Покупець ivanov@gmail.com ivan123
+23456789 Петренко Марія Бібліотекар petrenko@gmail.com maria123
+34567890 Сидоренко Олег Адмін sidor@gmail.com admin123
+45678901 Коваленко Ірина Покупець irina@gmail.com irina456
+56789012 Ткаченко Андрій Бібліотекар tkachenko@gmail.com andriy789
+
+
+37819654
+sdfghjk
+dfghjkl;
+1234@gmail.com
+1234
+Admin
+
+30463731
+dfghjkl;
+cvbjkl;
+5555@gmail.com
+1111
+Admin
+
+36135404
+sonya
+sonya
+1111@gmail.com
+1111
+Librarian
+
+78712358
+shelep
+sofiia
+sshelep@gmail.com
+12345678
+Customer
+

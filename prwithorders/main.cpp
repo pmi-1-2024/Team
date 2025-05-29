@@ -7,8 +7,9 @@
 #include "Publisher.h"
 #include "Genre.h"
 #include "BookManager.h"
-#include "BookManager.cpp"
 #include "User.h"
+#include "Order.h"
+#include "OrderManager.h"
 #include "PhysicalLibrary.h"
 #include "LibraryStockItem.h"
 #include "PhysicalLibraryManager.h"
@@ -118,7 +119,7 @@ bool loginUser(User& loggedInUser, const string& filename = "users.txt") {
     }
 }
 
-void customerMenu(BookManager& bookManager) {
+void customerMenu(BookManager& bookManager, OrderManager& orderManager, const User& currentUser) {
     int customerChoice;
 
     do {
@@ -126,36 +127,56 @@ void customerMenu(BookManager& bookManager) {
             << "\n1. View Available Books"
             << "\n2. Borrow a Book"
             << "\n3. Return a Book"
-            << "\n4. View Borrowed Books"
+            << "\n4. Buy a Book"
+            << "\n5. View Order History"
             << "\n0. Logout"
             << "\nYour choice: ";
-        customerChoice = bookManager.getIntInput("", true); 
+
+        cin >> customerChoice;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            customerChoice = -1;
+        }
+        else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
 
         switch (customerChoice) {
         case 1:
-            cout << "Displaying available books...\n";
-            bookManager.viewBooks(); 
+            cout << "\n=== Available Books ===" << endl;
+            bookManager.viewBooks();
             break;
         case 2:
-            cout << "Borrowing a book...\n";
+            orderManager.borrowBook(currentUser);
             break;
         case 3:
-            cout << "Returning a book...\n";
+            orderManager.returnBook(currentUser);
             break;
         case 4:
-            cout << "Displaying borrowed books...\n";
+            orderManager.buyBook(currentUser);
+            break;
+        case 5:
+            orderManager.viewOrderHistory(currentUser);
             break;
         case 0:
-            cout << "Logging out...\n";
+            cout << "Logging out..." << endl;
             break;
         default:
-            cout << "Invalid choice. Please try again.\n";
+            cout << "Invalid choice. Please try again." << endl;
         }
+
+        if (customerChoice != 0) {
+            cout << "\nPress Enter to continue...";
+            string dummy; getline(cin, dummy);
+        }
+
     } while (customerChoice != 0);
 }
 
 int main() {
     BookManager bookManager;
+    OrderManager orderManager(&bookManager);
 
     vector<PhysicalLibrary> physicalLibrariesList;
     PhysicalLibraryManager physicalLibraryManager(&physicalLibrariesList);
@@ -221,7 +242,7 @@ int main() {
                     } while (adminChoice != 0);
                 }
                 else if (currentUser.getRole() == "Customer") {
-                    runCustomerMenu(); 
+                    customerMenu(bookManager, orderManager, currentUser);
                 }
                 else {
                     cout << "No menu defined for your role.\n";
