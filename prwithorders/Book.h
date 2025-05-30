@@ -13,15 +13,15 @@ class Book {
 private:
     int id;
     string title;
-    int authorId;         
-    int publisherId;   
-    vector<int> genreIds; 
+    int authorId;
+    int publisherId;
+    vector<int> genreIds;
     double rating;
     string format;
 
-    int year = 0; 
-    double paperPrice = 0.0; 
-    double electronicPrice = 0.0; 
+    int year = 0;
+    double paperPrice = 0.0;
+    double electronicPrice = 0.0;
     bool available = true;
 
 
@@ -57,8 +57,7 @@ public:
     void setElectronicPrice(double price);
     void setAvailable(bool avail);
 
-    string getGenreIdCSV() const;
-    void displayInfo(const class BookManager& bookManager) const; 
+    void displayInfo(const class BookManager& bookManager) const;
 
     friend istream& operator>>(istream& is, Book& b);
     friend ostream& operator<<(ostream& os, const Book& b);

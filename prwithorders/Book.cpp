@@ -43,20 +43,6 @@ void Book::setPaperPrice(double price) { paperPrice = price; }
 void Book::setElectronicPrice(double price) { electronicPrice = price; }
 void Book::setAvailable(bool avail) { available = avail; }
 
-
-string Book::getGenreIdCSV() const {
-    string res;
-    if (!genreIds.empty()) {
-        for (size_t i = 0; i < genreIds.size(); ++i) {
-            res += to_string(genreIds[i]);
-            if (i < genreIds.size() - 1) {
-                res += ";";
-            }
-        }
-    }
-    return res;
-}
-
 void Book::displayInfo(const BookManager& bookManager) const {
     cout << "ID: " << id << endl;
     cout << "Title: " << title << endl;

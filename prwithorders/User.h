@@ -23,17 +23,21 @@ public:
         const string& email, const string& password, const string& role);
 
     static string generateID();
-    void inputUserData(const string& roleInput); 
+    void inputUserData(const string& roleInput);
 
     string getId() const { return id; }
-    string getSurname() const { return surname; } 
-    string getName() const { return name; }       
+    string getSurname() const { return surname; }
+    string getName() const { return name; }
     string getEmail() const { return email; }
     string getPassword() const { return password; }
     string getRole() const { return role; }
 
     void setPassword(const string& newPassword) { password = newPassword; }
     void setEmail(const string& newEmail) { email = newEmail; }
+    void setRole(const string& newRole);
+    vector<string> getFullInfoLines() const;
+    static void saveAllUsers(const string& filename, const vector<User>& users);
+
 
     void saveToFile(const string& filename) const;
     static bool exists(const string& filename, const string& email);
