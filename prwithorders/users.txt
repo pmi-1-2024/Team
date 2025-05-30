@@ -10,7 +10,7 @@ sdfghjk
 dfghjkl;
 1234@gmail.com
 1234
-Admin
+Librarian
 
 30463731
 dfghjkl;
@@ -31,5 +31,12 @@ shelep
 sofiia
 sshelep@gmail.com
 12345678
+Customer
+
+36066665
+0000@gmail.com
+dfghjkl;
+0000@gmail.com
+0000
 Customer
 
