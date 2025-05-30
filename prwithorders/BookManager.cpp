@@ -73,7 +73,6 @@ BookManager::~BookManager() {
     catch (...) {
         cerr << "Unknown error during BookManager destruction (saveAllData)." << endl;
     }
-
 }
 
 void BookManager::loadAllData() {
@@ -148,7 +147,7 @@ string BookManager::getStringLineInput(const string& prompt) const {
     getline(cin, input);
     if (cin.fail()) {
         cin.clear();
-        cerr << "Warning: get string line Input failed." << endl;
+        cerr << "Warning: getStringLineInput failed." << endl;
     }
     return input;
 }
@@ -192,9 +191,7 @@ void BookManager::addBook() {
             cout << "Book with this ID already exists. Try another ID." << endl;
         }
         b.setId(id_val);
-
         b.setTitle(getStringLineInput("Title: "));
-
         viewAuthors();
         while (true) {
             authorId_val = getIntInput("Author ID (from the list provided, non-zero): ");
@@ -202,7 +199,6 @@ void BookManager::addBook() {
             cout << "Author with this ID does not exist. Please select an ID from the list or add a new author first." << endl;
         }
         b.setAuthorId(authorId_val);
-
         viewPublishers();
         while (true) {
             publisherId_val = getIntInput("Publisher ID (from the list provided, non-zero): ");
@@ -210,7 +206,6 @@ void BookManager::addBook() {
             cout << "Publisher with this ID does not exist. Please select an ID from the list or add a new publisher first." << endl;
         }
         b.setPublisherId(publisherId_val);
-
         viewGenres();
         genre_ids_str_val = getStringLineInput("Genre IDs (e.g., 1;2;3 or empty, separated by ';'): ");
         if (!genre_ids_str_val.empty()) {
@@ -230,30 +225,23 @@ void BookManager::addBook() {
             }
         }
         b.setGenreIds(genre_ids_vec_val);
-
         rating_val = getDoubleInput("Rating (0.0 - 10.0): ");
         while (rating_val < 0.0 || rating_val > 10.0) {
             cout << "Rating must be between 0.0 - 10.0." << endl;
             rating_val = getDoubleInput("Rating (0.0 - 10.0): ");
         }
         b.setRating(rating_val);
-
         b.setFormat(getStringLineInput("Format (Paper/Electronic/Audio): "));
-
         year_val = getIntInput("Year of publication: ", true);
         b.setYear(year_val);
-
         paper_price_val = getDoubleInput("Paper version price (0 if none): ");
         b.setPaperPrice(paper_price_val < 0 ? 0 : paper_price_val);
-
         electronic_price_val = getDoubleInput("Electronic version price (0 if none): ");
         b.setElectronicPrice(electronic_price_val < 0 ? 0 : electronic_price_val);
-
         available_char = getCharInput("Available?", "yn");
         available_bool = (available_char == 'y');
         b.setAvailable(available_bool);
-
-        books.push_back(b); // Може кинути std::bad_alloc
+        books.push_back(b);
         cout << "Book added." << endl;
     }
     catch (const std::exception& e) {
@@ -336,7 +324,23 @@ void BookManager::modifyBook() {
         }
 
         viewGenres();
-        temp_str = getStringLineInput("New Genre IDs (current: " + book_to_modify->getGenreIdCSV() + ", separated by ';'): ");
+        string current_genre_ids_display_str;
+        const vector<int>& current_ids = book_to_modify->getGenreIds();
+        if (!current_ids.empty()) {
+            stringstream ss_display;
+            for (size_t i = 0; i < current_ids.size(); ++i) {
+                ss_display << current_ids[i];
+                if (i < current_ids.size() - 1) {
+                    ss_display << ";";
+                }
+            }
+            current_genre_ids_display_str = ss_display.str();
+        }
+        else {
+            current_genre_ids_display_str = "none";
+        }
+        temp_str = getStringLineInput("New Genre IDs (current: " + current_genre_ids_display_str + ", separated by ';'): ");
+
         if (!temp_str.empty()) {
             vector<int> new_genre_ids; stringstream ss(temp_str); string item_str; int item_int_val;
             while (getline(ss, item_str, ';')) {
@@ -652,6 +656,7 @@ bool BookManager::authorExists(int authorId) const { for (const auto& a : author
 bool BookManager::publisherExists(int publisherId) const { for (const auto& p : publishers) if (p.getId() == publisherId) return true; return false; }
 bool BookManager::genreExists(int genreId) const { for (const auto& g : genres) if (g.getId() == genreId) return true; return false; }
 
+
 int BookManager::displayMainMenu() const {
     cout << "\n--- Book Catalog Management Menu ---"
         << "\n1. Manage Books"
@@ -666,7 +671,7 @@ int BookManager::displayMainMenu() const {
 void BookManager::run() {
     bool running = true;
     while (running) {
-        try { // Загальний try-catch для циклу меню
+        try {
             int choice = displayMainMenu();
             int subChoice;
 
@@ -731,8 +736,7 @@ void BookManager::run() {
             if (running && choice != 0) {
                 cout << "\nPress Enter to continue...";
                 string dummy;
-                if (cin.peek() == '\n') cin.ignore(); \
-                    getline(cin, dummy);
+                getline(cin, dummy);
             }
 
         }
