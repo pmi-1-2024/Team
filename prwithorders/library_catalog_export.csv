@@ -1,3 +1,0 @@
-ID,Title,AuthorID,PublisherID,GenreIDs_CSV,Rating,Format,Year,PaperPrice,ElectronicPrice,Available
-12345678,"Game of thrones",11110000,88884444,"11;22",10,"Paper",1996,1000,300,true
-87654321,"Misery",22220000,99996666,"11;22",9,"Electronic",1998,300,120,true

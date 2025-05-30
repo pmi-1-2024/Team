@@ -1,8 +1,8 @@
-п»ї12345678 ВІГўГ Г­Г®Гў ВІГўГ Г­ ГЏГ®ГЄГіГЇГҐГ¶Гј ivanov@gmail.com ivan123
-23456789 ГЏГҐГІГ°ГҐГ­ГЄГ® ГЊГ Г°ВіГї ГЃВіГЎГ«ВіГ®ГІГҐГЄГ Г° petrenko@gmail.com maria123
-34567890 Г‘ГЁГ¤Г®Г°ГҐГ­ГЄГ® ГЋГ«ГҐГЈ ГЂГ¤Г¬ВіГ­ sidor@gmail.com admin123
-45678901 ГЉГ®ГўГ Г«ГҐГ­ГЄГ® ВІГ°ГЁГ­Г  ГЏГ®ГЄГіГЇГҐГ¶Гј irina@gmail.com irina456
-56789012 Г’ГЄГ Г·ГҐГ­ГЄГ® ГЂГ­Г¤Г°ВіГ© ГЃВіГЎГ«ВіГ®ГІГҐГЄГ Г° tkachenko@gmail.com andriy789
+12345678 Іванов Іван Покупець ivanov@gmail.com ivan123
+23456789 Петренко Марія Бібліотекар petrenko@gmail.com maria123
+34567890 Сидоренко Олег Адмін sidor@gmail.com admin123
+45678901 Коваленко Ірина Покупець irina@gmail.com irina456
+56789012 Ткаченко Андрій Бібліотекар tkachenko@gmail.com andriy789
 
 
 37819654
@@ -38,10 +38,5 @@ Customer
 dfghjkl;
 0000@gmail.com
 0000
-Customer95621413
-shelep
-sofiia
-sshelep5@gmail.com
-12345678
 Customer
 
