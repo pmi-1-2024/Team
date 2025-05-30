@@ -16,8 +16,8 @@ Order::Order(const string& userId, int bookId, int type, const string& bookForma
     : orderId(nextOrderId++), userId(userId), bookId(bookId), type(type),
     status(0), returnDate(""), totalPrice(price), bookFormat(bookFormat) {
     orderDate = getCurrentDate();
-    if (type == 1) { // PURCHASE
-        status = 2; // COMPLETED
+    if (type == 1) { 
+        status = 2; 
     }
 }
 
@@ -47,7 +47,7 @@ string Order::getCurrentDate() const {
 }
 
 bool Order::canBeReturned() const {
-    return (type == 0 && status == 0); // BORROW and ACTIVE
+    return (type == 0 && status == 0); 
 }
 
 ostream& operator<<(ostream& os, const Order& order) {
@@ -79,7 +79,6 @@ istream& operator>>(istream& is, Order& order) {
     is.ignore(numeric_limits<streamsize>::max(), '\n');
     if (!getline(is, order.bookFormat)) return is;
 
-    // Update nextOrderId to ensure unique IDs
     if (order.orderId >= Order::nextOrderId) {
         Order::nextOrderId = order.orderId + 1;
     }

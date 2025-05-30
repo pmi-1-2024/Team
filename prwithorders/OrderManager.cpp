@@ -16,7 +16,7 @@ OrderManager::~OrderManager() {
 void OrderManager::loadOrdersFromFile() {
     ifstream file(ordersFileName);
     if (!file.is_open()) {
-        return; // File doesn't exist yet, that's okay
+        return; 
     }
 
     Order order;
@@ -55,7 +55,7 @@ void OrderManager::displayOrderDetails(const Order& order) const {
         cout << "Book not found (ID: " << order.getBookId() << ")" << endl;
     }
 
-    if (order.getType() == 1) { // PURCHASE
+    if (order.getType() == 1) { 
         cout << "Format: " << order.getBookFormat() << endl;
         cout << "Price: " << order.getTotalPrice() << " UAH" << endl;
     }
@@ -71,7 +71,6 @@ void OrderManager::borrowBook(const User& currentUser) {
     bool continueBorrowing = true;
 
     while (continueBorrowing) {
-        // Show available books
         cout << "\n=== Available Books for Borrowing ===" << endl;
         const vector<Book>& allBooks = bookManager->getAllBooks();
         vector<Book> availableBooks;
@@ -91,10 +90,8 @@ void OrderManager::borrowBook(const User& currentUser) {
             book.displayInfo(*bookManager);
         }
 
-        // Get book selection
         int bookId = getIntInput("Enter the ID of the book you want to borrow: ");
 
-        // Find the book
         Book* selectedBook = nullptr;
         for (auto& book : availableBooks) {
             if (book.getId() == bookId) {
@@ -107,25 +104,21 @@ void OrderManager::borrowBook(const User& currentUser) {
             cout << "Invalid book ID or book not available for borrowing." << endl;
         }
         else {
-            // Create borrow order
-            Order newOrder(currentUser.getId(), bookId, 0); // 0 = BORROW
+            Order newOrder(currentUser.getId(), bookId, 0); 
             orders.push_back(newOrder);
 
-            // Mark book as unavailable
             bookManager->setBookAvailability(bookId, false);
 
             cout << "Book \"" << selectedBook->getTitle() << "\" successfully borrowed!" << endl;
             cout << "Order ID: " << newOrder.getOrderId() << endl;
         }
 
-        // Ask if user wants to borrow another book
         char choice = getCharInput("Do you want to borrow another book?", "yn");
         continueBorrowing = (choice == 'y');
     }
 }
 
 void OrderManager::returnBook(const User& currentUser) {
-    // Get active borrow orders for the user
     vector<Order> activeOrders = getActiveOrders(currentUser.getId());
 
     if (activeOrders.empty()) {
@@ -140,18 +133,15 @@ void OrderManager::returnBook(const User& currentUser) {
 
     int orderId = getIntInput("Enter the Order ID of the book you want to return: ");
 
-    // Find the order
     bool orderFound = false;
     for (auto& order : orders) {
         if (order.getOrderId() == orderId &&
             order.getUserId() == currentUser.getId() &&
             order.canBeReturned()) {
 
-            // Mark order as returned
-            order.setStatus(1); // RETURNED
+            order.setStatus(1); 
             order.setReturnDate(order.getCurrentDate());
 
-            // Make book available again
             bookManager->setBookAvailability(order.getBookId(), true);
 
             cout << "Book successfully returned!" << endl;
@@ -169,7 +159,6 @@ void OrderManager::buyBook(const User& currentUser) {
     bool continueBuying = true;
 
     while (continueBuying) {
-        // Show all books
         cout << "\n=== Books Available for Purchase ===" << endl;
         const vector<Book>& allBooks = bookManager->getAllBooks();
 
@@ -182,10 +171,8 @@ void OrderManager::buyBook(const User& currentUser) {
             book.displayInfo(*bookManager);
         }
 
-        // Get book selection
         int bookId = getIntInput("Enter the ID of the book you want to buy: ");
 
-        // Find the book
         const Book* selectedBook = bookManager->findBookById(bookId);
 
         if (!selectedBook) {
@@ -193,7 +180,6 @@ void OrderManager::buyBook(const User& currentUser) {
             continue;
         }
 
-        // Show format options and prices
         cout << "\n=== Purchase Options for \"" << selectedBook->getTitle() << "\" ===" << endl;
 
         vector<pair<string, double>> availableFormats;
@@ -214,7 +200,6 @@ void OrderManager::buyBook(const User& currentUser) {
             continue;
         }
 
-        // Get format choice
         int formatChoice = getIntInput("Choose format (enter number): ");
 
         if (formatChoice < 1 || formatChoice >(int)availableFormats.size()) {
@@ -225,15 +210,13 @@ void OrderManager::buyBook(const User& currentUser) {
         string selectedFormat = availableFormats[formatChoice - 1].first;
         double price = availableFormats[formatChoice - 1].second;
 
-        // Create purchase order
-        Order newOrder(currentUser.getId(), bookId, 1, selectedFormat, price); // 1 = PURCHASE
+        Order newOrder(currentUser.getId(), bookId, 1, selectedFormat, price); 
         orders.push_back(newOrder);
 
         cout << "Book \"" << selectedBook->getTitle() << "\" (" << selectedFormat
             << " version) successfully purchased for " << price << " UAH!" << endl;
         cout << "Order ID: " << newOrder.getOrderId() << endl;
 
-        // Ask if user wants to buy another book
         char choice = getCharInput("Do you want to buy another book?", "yn");
         continueBuying = (choice == 'y');
     }
@@ -256,7 +239,7 @@ void OrderManager::viewOrderHistory(const User& currentUser) const {
 vector<Order> OrderManager::getActiveOrders(const string& userId) const {
     vector<Order> activeOrders;
     for (const auto& order : orders) {
-        if (order.getUserId() == userId && order.getStatus() == 0) { // ACTIVE
+        if (order.getUserId() == userId && order.getStatus() == 0) { 
             activeOrders.push_back(order);
         }
     }
@@ -277,8 +260,8 @@ bool OrderManager::hasActiveOrderForBook(const string& userId, int bookId) const
     for (const auto& order : orders) {
         if (order.getUserId() == userId &&
             order.getBookId() == bookId &&
-            order.getStatus() == 0 && // ACTIVE
-            order.getType() == 0) { // BORROW
+            order.getStatus() == 0 && 
+            order.getType() == 0) { 
             return true;
         }
     }
